@@ -27,6 +27,16 @@ describe("When Form is created", () => {
 
 });
 
+// Test de non-régression : vérifie que les liens du menu pointent
+// bien vers des sections qui existent réellement sur la page
+describe("When the menu navigation is used", () => {
+  it("the navigation anchors point to existing sections", () => {
+    render(<Home />);
+    expect(document.querySelector("#nos-services")).toBeInTheDocument();
+    expect(document.querySelector("#nos-realisations")).toBeInTheDocument();
+    expect(document.querySelector("#notre-equipe")).toBeInTheDocument();
+  });
+});
 
 describe("When a page is created", () => {
   it("a list of events is displayed", () => {
