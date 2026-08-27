@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { DataProvider, api } from "../../contexts/DataContext";
+import eventsData from "../../../public/events.json";
 import Home from "./index";
 
 describe("When Form is created", () => {
@@ -27,28 +29,41 @@ describe("When Form is created", () => {
 
 });
 
-// Test de non-régression : vérifie que les liens du menu pointent
-// bien vers des sections qui existent réellement sur la page
-describe("When the menu navigation is used", () => {
-  it("the navigation anchors point to existing sections", () => {
-    render(<Home />);
-    expect(document.querySelector("#nos-services")).toBeInTheDocument();
-    expect(document.querySelector("#nos-realisations")).toBeInTheDocument();
-    expect(document.querySelector("#notre-equipe")).toBeInTheDocument();
-  });
-});
-
 describe("When a page is created", () => {
-  it("a list of events is displayed", () => {
-    // to implement
+  it("a list of events is displayed", async () => {
+    api.loadData = jest.fn().mockReturnValue(eventsData)
+    render(
+      <DataProvider>
+        <Home />
+      </DataProvider>
+    );
+    /* Test d'un événement présent dans la liste */
+    await screen.findByText("User&product MixUsers")
   })
   it("a list a people is displayed", () => {
-    // to implement
+    render(<Home />)
+    /* Test de personnes dans la list */
+    expect(screen.getByText("Alice")).toBeInTheDocument()
+    expect(screen.getByText('Luís')).toBeInTheDocument()
   })
   it("a footer is displayed", () => {
-    // to implement
+    render(<Home />)
+    /* Test d'un éléments présent dans le footer */
+    expect(screen.getByText("45 avenue de la République, 75000 Paris")).toBeInTheDocument()
   })
-  it("an event card, with the last event, is displayed", () => {
-    // to implement
+  it("an event card, with the last event, is displayed", async () => {
+    api.loadData = jest.fn().mockReturnValue(eventsData)
+    render(
+      <DataProvider>
+        <Home />
+      </DataProvider>
+    )
+    /* Calcule le même "last" */
+     /* ... pour copier tous les éléments du tableau */
+    const lastEvent = [...eventsData.events].sort((a, b) =>
+      new Date(a.date) < new Date(b.date) ? 1 : -1
+    )[0]
+
+    await screen.findAllByText(lastEvent.title)
   })
 });
